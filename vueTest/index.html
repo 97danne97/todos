@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="https://vuejs.org/js/vue.min.js"></script>
+        <link rel="stylesheet" href="index.css" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="vue2-animate.min.css">
+        <!-- CDNJS :: Sortable (https://cdnjs.com/) -->
+        <script src="//cdn.jsdelivr.net/npm/sortablejs@1.7.0/Sortable.min.js"></script>
+
+        <!-- CDNJS :: Vue.Draggable (https://cdnjs.com/) -->
+        <script src="//cdnjs.cloudflare.com/ajax/libs/Vue.Draggable/2.15.0/vuedraggable.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+        <title>ToDo | The modern list</title>
+    </head>
+
+    <body>
+        <div id="todo">
+            <nav class="navbar">
+                <div class="nav-btn clickable" @click="isShow = !isShow">
+                    <div class="nav-icon" v-bind:class="{ active: isShow }">
+                    </div>
+                </div>
+                <div class="nav-left">
+                    <h1><i>Todo.com</i></h1>
+                </div>
+                <transition name="fade" mode="out-in">
+                <ul class="nav-right" v-if="isShow">
+                    <li><a href="../portfolio/">Home</a></li>
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">Source</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+                </transition>
+            </nav>
+            <main class="container">
+                <h1>Todo List</h1>
+                <span><input autofocus v-model="newTodo" v-on:keyup.enter="addTodo" placeholder="Add items to your list..."></span>
+                <draggable v-model="todos" :options={handle:".moveItem"}>
+                    <transition-group name="list-item" tag="div" class="list__div">
+                        <div class="list__item" v-for="todo in todos" :key="todo">
+                            <div class="moveItem">
+                                <div class="moveIcon"></div>
+                            </div>
+                            <span><input class="listEdit" v-model="todo.text"></span>
+                            <div class="removeItem" v-on:click="removeTodo(todo)"></div>
+                        </div>
+                    </transition-group>
+                </draggable>
+            </main>
+            <div class="clickable clear" v-on:click="clearTodo">
+                <i class="material-icons">delete</i>
+            </div>
+        </div>
+        
+        <script>
+            var app = new Vue({
+                el: '#todo',
+                data: {
+                    newTodo: "",
+                    todos: [{
+                            text: "Mjölk"
+                        },
+                        {
+                            text: "Doritos"
+                        },
+                        {
+                            text: "Skivat bröd"
+                        },
+                        {
+                            text: "Julmust"
+                        },
+                        {
+                            text: "Skinka"
+                        },
+                        {
+                            text: "Ost"
+                        },
+                        {
+                            text: "Läsk"
+                        }
+                    ],
+                    isShow:false,
+                },
+                methods: {
+                    addTodo: function() {
+                        //trim() is used to remove whitespace from both ends of a string
+                        var todo = this.newTodo.trim();
+                        //if todo is not an empty string
+                        if (todo) {
+                            //Push an object containing the todo to the taskList array
+                            this.todos.push({
+                                text: todo,
+                                checked: false,
+                            });
+                            //Reset newTodo to an empty string so the input field is cleared
+                            this.newTodo = "";
+                        }
+                    },
+                    removeTodo: function(todo) {
+                        //Do this instead.
+                        var index = this.todos.indexOf(todo);
+                        this.todos.splice(index, 1);
+                    },
+                    clearTodo: function(){
+                        this.todos.splice(0);
+                    }
+                },
+                filters: {
+                    capitalize: function(value) {
+                        if (!value) return ''
+                        value = value.toString()
+                        return value.charAt(0).toUpperCase() + value.slice(1)
+                    }
+                }
+            })
+        </script>
+    </body>
+</html>
