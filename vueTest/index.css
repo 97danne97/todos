@@ -302,7 +302,7 @@ span:hover::after {
 
 .list-item-enter {
     opacity: .3;
-    transform: translateY(-5px) scale(.95);
+    transform: translateY(-5px);
 }
 
 .fade-enter-active, .fade-leave-active {

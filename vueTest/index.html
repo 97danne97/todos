@@ -16,6 +16,7 @@
         <script src="https://unpkg.com/vuefire/dist/vuefire.js"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+        <script src="https://cdn.jsdelivr.net/npm/vue2-filters/dist/vue2-filters.min.js"></script>
         <title>ToDo | The modern list</title>
     </head>
 
@@ -41,9 +42,9 @@
             <main class="container">
                 <h1>Todo List</h1>
                 <span><i class="material-icons">create</i><input autofocus v-model="newTodo.title" v-on:keypress.enter="addTodo" placeholder="Add items to your list..."></span>
-                <draggable @change="reorder" :list="todos" :options="{ghostClass:'ghost'}">
+                <draggable @change="reorder" :list="todos">
                     <transition-group name="list-item" tag="div" class="list__div">
-                        <div class="list__item" v-for="(todo, index) in todos" :key="todo">
+                        <div class="list__item" v-for="(todo, index) in orderBy(todos, 'priority')" :key="todo">
                             <div class="moveItem">
                                 <i class="material-icons">drag_handle</i>
                             </div>
@@ -72,13 +73,17 @@
             
             var app = new Vue({
                 el: '#todo',
-                data() { return {
-                    newTodo: {
-                        title: "",
-                        checked: "",
-                    },
-                    isShow:false,
-                }},
+                data() {
+                    return {
+                        newTodo: {
+                            title: "",
+                            checked: "",
+                            priority: "",
+                        },
+                        isShow:false,
+                    }
+                },
+                
                 firebase: function () {
                     return {
                     todos: todosRef
@@ -94,6 +99,7 @@
                             todosRef.push({
                                 title: todo,
                                 checked: false,
+                                priority: "",
                             });
                             //Reset newTodo to an empty string so the input field is cleared
                             this.newTodo.title = "";
@@ -109,8 +115,13 @@
                     clearTodo: function(){
                         todosRef.remove();
                     },
-                    reorder: function (event) {
-                      todosRef.splice(event.newIndex, 0, todosRef.splice(event.oldIndex, 1)[0])
+                    reorder: function (oldIndex, newIndex) {
+                      // move the item in the underlying array
+                      this.todos.splice(newIndex, 0, this.todos.splice(oldIndex, 1)[0]);
+                      // update order property based on position in array
+                      this.todos.forEach(function(todo, index){
+                        todosRef.child(todo['.key']).child('priority').set(index);
+                      });
                     }
                 },/*
                 filters: {
