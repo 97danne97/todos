@@ -1,137 +1,156 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <script src="https://vuejs.org/js/vue.min.js"></script>
-        <link rel="stylesheet" href="index.css" type="text/css">
-        <link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet">
-        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-        <meta charset="utf-8">
-        <!-- CDNJS :: Sortable (https://cdnjs.com/) -->
-        <script src="//cdn.jsdelivr.net/npm/sortablejs@1.7.0/Sortable.min.js"></script>
-        <!-- CDNJS :: Vue.Draggable (https://cdnjs.com/) -->
-        <script src="//cdnjs.cloudflare.com/ajax/libs/Vue.Draggable/2.16.0/vuedraggable.min.js"></script>
-        <!-- Firebase -->
-        <script src="https://gstatic.com/firebasejs/4.0.0/firebase.js"></script>
-        <!-- VueFire -->
-        <script src="https://unpkg.com/vuefire/dist/vuefire.js"></script>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-        <script src="https://cdn.jsdelivr.net/npm/vue2-filters/dist/vue2-filters.min.js"></script>
-        <title>ToDo | The modern list</title>
-    </head>
 
-    <body>
-        <div id="todo">
-            <nav class="navbar">
-                <div class="nav-btn clickable" @click="isShow = !isShow">
-                    <div class="nav-icon" v-bind:class="{ active: isShow }">
-                    </div>
+<head>
+    <script src="https://vuejs.org/js/vue.min.js"></script>
+    <link rel="stylesheet" href="index.css" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta charset="utf-8">
+    <!-- CDNJS :: Sortable (https://cdnjs.com/) -->
+    <script src="//cdn.jsdelivr.net/npm/sortablejs@1.7.0/Sortable.min.js"></script>
+    <!-- CDNJS :: Vue.Draggable (https://cdnjs.com/) -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/Vue.Draggable/2.16.0/vuedraggable.min.js"></script>
+    <!-- Firebase -->
+    <script src="https://gstatic.com/firebasejs/4.0.0/firebase.js"></script>
+    <!-- VueFire -->
+    <script src="https://unpkg.com/vuefire/dist/vuefire.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <script src="https://cdn.jsdelivr.net/npm/vue2-filters/dist/vue2-filters.min.js"></script>
+    <title>ToDo | The modern list</title>
+</head>
+
+<body>
+    <div id="todo">
+        <nav class="navbar">
+            <div class="nav-btn clickable" @click="isShow = !isShow">
+                <div class="nav-icon" v-bind:class="{ active: isShow }">
                 </div>
-                <div class="nav-left">
-                    <h1><i>Todo.com</i></h1>
-                </div>
-                <transition name="fade">
+            </div>
+            <div class="nav-left">
+                <h1><i>Todo.com</i></h1>
+            </div>
+            <transition name="fade">
                 <ul class="nav-right" v-if="isShow">
                     <li><a href="../portfolio/">Home</a></li>
                     <li><a href="#">About</a></li>
                     <li><a href="#">Source</a></li>
                     <li><a href="#">Contact</a></li>
                 </ul>
-                </transition>
-            </nav>
-            <main class="container">
-                <h1>Todo List</h1>
-                <span><i class="material-icons">create</i><input autofocus v-model="newTodo.title" v-on:keypress.enter="addTodo" placeholder="Add items to your list..."></span>
-                <draggable @change="reorder" :list="todos">
-                    <transition-group name="list-item" tag="div" class="list__div">
-                        <div class="list__item" v-for="(todo, index) in orderBy(todos, 'priority')" :key="todo">
-                            <div class="moveItem">
-                                <i class="material-icons">drag_handle</i>
-                            </div>
-                            <span><input class="listEdit" v-model="todo.title" :value="todo.title"
-            v-on:keyup.enter="updateTodoText(todo, $event.target.value)"></span>
-                            <div class="removeItem clickable" v-on:click="removeTodo(todo)"></div>
+            </transition>
+        </nav>
+        <main class="container">
+            <h1>Todo List</h1>
+            <span><i class="material-icons">create</i><input autofocus v-model="newTodo.title" v-on:keypress.enter="addTodo" placeholder="Add items to your list..."></span>
+            <draggable @change="saveOrder" :list="todos">
+                <transition-group :name="transitionModeRef" tag="div" class="list__div">
+                    <div class="list__item" v-for="(todo, index) in orderBy(todos, 'priority')" :key="todo">
+                        <div class="moveItem">
+                            <i class="material-icons">drag_handle</i>
                         </div>
-                    </transition-group>
-                </draggable>
-            </main>
-            <transition name="scale">
-                <div class="clickable clear" @click="clearTodo" v-if="todos.length > 0">
-                    <i class="material-icons">delete</i>
-                </div>
-            </transition>    
-        </div>
-        
-        <script>
-            
-            /* global Vue, firebase */
-            Vue.config.devtools = true
-              var db = firebase.initializeApp({
-                databaseURL: 'https://vuetest-1ae8c.firebaseio.com'
-              }).database()
-              var todosRef = db.ref('todos')
-            
-            var app = new Vue({
-                el: '#todo',
-                data() {
-                    return {
-                        newTodo: {
-                            title: "",
-                            checked: "",
+                        <span><input class="listEdit" v-model="todo.title" :value="todo.title"
+            v-on:keyup.enter="updateTodoText(todo, $event.target.value)"></span>
+                        <div class="removeItem clickable" v-on:click="removeTodo(todo)"></div>
+                    </div>
+                </transition-group>
+            </draggable>
+        </main>
+        <transition name="scale">
+            <div class="clickable clear" @click="clearTodo" v-if="todos.length > 0">
+                <i class="material-icons">delete</i>
+            </div>
+        </transition>
+    </div>
+
+    <script>
+        /* global Vue, firebase */
+        Vue.config.devtools = true
+        var db = firebase.initializeApp({
+            databaseURL: 'https://vuetest-1ae8c.firebaseio.com'
+        }).database()
+        var todosRef = db.ref('todos')
+        var transitionModeRef = db.ref('transitionMode')
+
+        var app = new Vue({
+            el: '#todo',
+            data() {
+                return {
+                    newTodo: {
+                        title: "",
+                        checked: "",
+                        priority: "",
+                    },
+                    isShow: false,
+                }
+            },
+
+            firebase: function() {
+                return {
+                    todos: todosRef,
+                    transitionMode: transitionModeRef
+                }
+            },
+            methods: {
+                addTodo: function() {
+                    //trim() is used to remove whitespace from both ends of a string
+                    var todo = this.newTodo.title.trim();
+                    //if todo is not an empty string
+                    if (todo) {
+                        //Push an object containing the todo to the todos array
+                        todosRef.push({
+                            title: todo,
+                            checked: false,
                             priority: "",
-                        },
-                        isShow:false,
+                        });
+                        //Reset newTodo to an empty string so the input field is cleared
+                        this.newTodo.title = "";
                     }
+                },
+
+                //Save user todo edit
+                updateTodoText: function(todo, newText) {
+                    this.transitionModeRef = "list-item";
+                    todosRef.child(todo['.key']).child('title').set(newText);
+                    setTimeout(() => this.transitionModeRef = "list-itemMoved", 1000);
+                },
+
+                //Remove todo item from Firebase
+                removeTodo: function(todo) {
+                    this.transitionModeRef = "list-item";
+                    todosRef.child(todo['.key']).remove();
+                    setTimeout(() => this.transitionModeRef = "list-itemMoved", 1000);
+                    
+                },
+
+                //Remove all todo items
+                clearTodo: function() {
+                    this.transitionModeRef = "list-item";
+                    todosRef.remove();
+                    setTimeout(() => this.transitionModeRef = "list-itemMoved", 1000);
+                },
+
+                //Fetch todo position index data and save order to Firebase
+                saveOrder: function(oldIndex, newIndex) {
+                    // move the item in the underlying array
+                    this.transitionModeRef = "list-itemMoved";
+                    this.todos.splice(newIndex, 0, this.todos.splice(oldIndex, 1)[0]);
+
+                    // update order property based on position in array
+                    this.todos.forEach(function(todo, index) {
+                        todosRef.child(todo['.key']).update({
+                            priority: index
+                        });
+                    });
                 },
                 
-                firebase: function () {
-                    return {
-                    todos: todosRef
-                    }
-                },
-                methods: {
-                    addTodo: function() {
-                        //trim() is used to remove whitespace from both ends of a string
-                        var todo = this.newTodo.title.trim();
-                        //if todo is not an empty string
-                        if (todo) {
-                            //Push an object containing the todo to the taskList array
-                            todosRef.push({
-                                title: todo,
-                                checked: false,
-                                priority: "",
-                            });
-                            //Reset newTodo to an empty string so the input field is cleared
-                            this.newTodo.title = "";
-                        }
-                    },
-                    updateTodoText: function (todo, newText) {
-                        todosRef.child(todo['.key']).child('title').set(newText)
-                    },
+                reorder: function() {
                     
-                    removeTodo: function(todo) {
-                        todosRef.child(todo['.key']).remove();
-                    },
-                    clearTodo: function(){
-                        todosRef.remove();
-                    },
-                    reorder: function (oldIndex, newIndex) {
-                      // move the item in the underlying array
-                      this.todos.splice(newIndex, 0, this.todos.splice(oldIndex, 1)[0]);
-                      // update order property based on position in array
-                      this.todos.forEach(function(todo, index){
-                        todosRef.child(todo['.key']).child('priority').set(index);
-                      });
-                    }
-                },/*
-                filters: {
-                    capitalize: function(value) {
-                        if (!value) return ''
-                        value = value.toString()
-                        return value.charAt(0).toUpperCase() + value.slice(1)
-                    }
-                },*/
-            })
-        </script>
-    </body>
+                }
+            }
+        })
+
+    </script>
+</body>
+
 </html>

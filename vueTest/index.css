@@ -279,28 +279,41 @@ span:hover::after {
     transition: .1s;
 }
 
-@keyframes mymove {
-    0% {right: 0;bottom: 300px;opacity: 1;width: 100%;}
-    50%{right: 0;bottom: 5px;}
-    60%{opacity: 1;}
-    90% {right:0;bottom: 5px;opacity: 0;}
-    100% {opacity: 0;}
-}
-
 .list-item-enter-active,
 .list-item-leave-active,
 .list-item-move {
-    transition: opacity .2s, transform .2s;
+    transition: opacity 4s ease transform 1.5s cubic-bezier(.9, .35, .09, .94);
 }
 
 .list-item-leave-active{
 /* .list-leave-active for <2.1.8 */
     position: fixed;
-    animation: mymove .6s;
     z-index: 2;
+    opacity: 0;
+    right: 0;
+    bottom: 0;
     }
 
 .list-item-enter {
+    opacity: .3;
+    transform: translateY(-5px);
+}
+
+/*THIS STYLE IS SET ON LIST REORDER*/
+.list-itemMoved-enter-active,
+.list-itemMoved-leave-active,
+.list-itemMoved-move {
+    transition: opacity 2s transform .5s cubic-bezier(.9, .35, .09, .94);
+}
+
+.list-itemMoved-leave-active{
+/* .list-leave-active for <2.1.8 */
+    position: fixed;
+    z-index: 2;
+    opacity: 0;
+    }
+
+.list-itemMoved-enter {
     opacity: .3;
     transform: translateY(-5px);
 }
@@ -315,15 +328,17 @@ span:hover::after {
     transition: all .3s;
     opacity: 0;
     height: 0;
+    z-index: 10;
 }
 
 .scale-enter-active, .scale-leave-active {
-  transition: transform .2s ease-out;
+  transition: transform .3s ease-out;
     transform-origin: right bottom;
 }
 
 .scale-enter, .scale-leave-to {
   transform: scale(0);
+    transition: transform .3s ease-out;
 }
 
 .clickable{
@@ -347,7 +362,8 @@ span:hover::after {
 }
 
 .clickable:active{
-    transform: scale(1.03);
+    transition: .2s;
+    transform: scale(1.05);
 }
 
 .clear{
