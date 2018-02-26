@@ -85,6 +85,7 @@ nav {
     box-shadow: none !important;
     background-color: transparent !important;
     transform: none !important;
+    position: absolute;
 }
 
 
@@ -133,7 +134,7 @@ nav {
 .nav-left{
     height: 70px;
     line-height: 20px;
-    margin: 0 40px 0 30px;
+    margin: 0 40px 0 80px;
 }
 
 nav > ul{
@@ -331,7 +332,7 @@ span:hover::after {
 }
 
 .fade-enter-active, .fade-leave-active {
-    transition: all .4s cubic-bezier(.07, .88, .35, .93);
+    transition: all .3s cubic-bezier(.07, .88, .35, .93);
     transform: scale(1);
     height: 70px;
 }
@@ -342,7 +343,7 @@ span:hover::after {
 
 .fade-enter,
 .fade-leave-to {
-    transition: all .4s;
+    transition: all .3s;
     opacity: 0;
     height: 0;
     transform: scale(0);
@@ -401,5 +402,14 @@ span:hover::after {
     nav > ul li {
         width: 100%;
         max-width: none;
+    }
+}
+
+@media (max-width: 768px){
+    .nav-left {
+        width: 100%;
+        text-align: center;
+        flex-grow: 1;
+        margin: 0 30px;
     }
 }
