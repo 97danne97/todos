@@ -394,5 +394,6 @@ span:hover::after {
 @media (max-width: 480px){
     nav > ul li {
         width: 100%;
+        max-width: none;
     }
 }
