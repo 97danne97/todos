@@ -44,7 +44,7 @@
             <h1>Todo List</h1>
             <span><i class="material-icons">create</i><input autofocus v-model="newTodo.title" v-on:keypress.enter="addTodo" placeholder="Add items to your list..."></span>
             <draggable @change="saveOrder" :list="todos">
-                <transition-group :name="transitionModeRef" tag="div" class="list__div">
+                <transition-group :name="transitionMode" tag="div" class="list__div">
                     <div class="list__item" v-for="(todo, index) in orderBy(todos, 'priority')" :key="todo">
                         <div class="moveItem">
                             <i class="material-icons">drag_handle</i>
@@ -70,7 +70,6 @@
             databaseURL: 'https://vuetest-1ae8c.firebaseio.com'
         }).database()
         var todosRef = db.ref('todos')
-        var transitionModeRef = db.ref('transitionMode')
 
         var app = new Vue({
             el: '#todo',
@@ -82,13 +81,13 @@
                         priority: "",
                     },
                     isShow: false,
+                    transitionMode: "list-item"
                 }
             },
 
             firebase: function() {
                 return {
-                    todos: todosRef,
-                    transitionMode: transitionModeRef
+                    todos: todosRef
                 }
             },
             methods: {
@@ -110,30 +109,27 @@
 
                 //Save user todo edit
                 updateTodoText: function(todo, newText) {
-                    this.transitionModeRef = "list-item";
+                    this.transitionMode = "list-item";
                     todosRef.child(todo['.key']).child('title').set(newText);
-                    setTimeout(() => this.transitionModeRef = "list-itemMoved", 1000);
                 },
 
                 //Remove todo item from Firebase
                 removeTodo: function(todo) {
-                    this.transitionModeRef = "list-item";
+                    this.transitionMode = "list-item";
                     todosRef.child(todo['.key']).remove();
-                    setTimeout(() => this.transitionModeRef = "list-itemMoved", 1000);
                     
                 },
 
                 //Remove all todo items
                 clearTodo: function() {
-                    this.transitionModeRef = "list-item";
+                    this.transitionMode = "list-item";
                     todosRef.remove();
-                    setTimeout(() => this.transitionModeRef = "list-itemMoved", 1000);
                 },
 
                 //Fetch todo position index data and save order to Firebase
                 saveOrder: function(oldIndex, newIndex) {
                     // move the item in the underlying array
-                    this.transitionModeRef = "list-itemMoved";
+                    this.transitionMode = "list-itemMoved";
                     this.todos.splice(newIndex, 0, this.todos.splice(oldIndex, 1)[0]);
 
                     // update order property based on position in array
