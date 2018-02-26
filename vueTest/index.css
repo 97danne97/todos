@@ -6,12 +6,12 @@
     --large-li-height:70px;
     --margin-center:0 auto 0 auto;
     --color-accent:#42d496;
-    --color-danger:#f07070;
+    --color-danger:#e37373;
     --accent-background:#2ae28d;
-    --shadow: 0 2px 3px #848484;
-    --shadow-hover:0 2px 5px #656565;
+    --shadow: 0 2px 3px #adadad;
+    --shadow-hover:0 2px 5px #939393;
     --card-background: #ebebeb;
-    --card-background-hover: #e3e3e3;
+    --card-background-hover: #e5e5e5;
 }
 
 ::selection{
@@ -84,6 +84,7 @@ nav {
     max-height: 70px !important;
     box-shadow: none !important;
     background-color: transparent !important;
+    transform: none !important;
 }
 
 
@@ -130,28 +131,33 @@ nav {
 /* END Hamburger menu icon END */
 
 .nav-left{
-    flex-grow: 1;
     height: 70px;
     line-height: 20px;
     margin: 0 40px 0 30px;
 }
 
 nav > ul{
-    flex-grow: 3;
+    flex-grow: 1;
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
+    justify-content: flex-end;
 }
 
 nav > ul > li{
     flex-grow: 1;
-    min-width: 200px;
+    min-width: 150px;
+    max-width: 200px;
     display: flex;
 }
 
 nav > ul > li > a{
     width: 100%;
     line-height: 70px;
+    transition: .1s;
+}
+
+nav > ul > li > a:hover{
+    background: rgb(41, 214, 134);
 }
 
 span{
@@ -169,6 +175,10 @@ span > i {
     flex-grow: 1;
 }
 
+span > i::before{
+    content: 'create';
+}
+
 input {
     background: transparent;
     border: none;
@@ -181,7 +191,7 @@ input {
 }
 
 span:focus-within{
-    background: #e2e2e2;
+    background: var(--card-background-hover);
 }
 
 span::after{
@@ -294,7 +304,6 @@ span:hover::after {
     opacity: .8;
     right: 0;
     bottom: 0;
-    width: 0;
     }
 
 .list-item-enter {
@@ -306,7 +315,7 @@ span:hover::after {
 .list-itemMoved-enter-active,
 .list-itemMoved-leave-active,
 .list-itemMoved-move {
-    transition: opacity 2s transform .5s cubic-bezier(.9, .35, .09, .94);
+    transition: none;
 }
 
 .list-itemMoved-leave-active{
@@ -323,7 +332,7 @@ span:hover::after {
 
 .fade-enter-active, .fade-leave-active {
     transition: all .2s cubic-bezier(.07, .88, .35, .93);
-    height: 280px;
+    height: 70px;
 }
 
 .fade-enter,
@@ -378,7 +387,7 @@ span:hover::after {
 
 @media (min-width: 480px){
     .nav-btn{
-        display: none;
+        display: ;
     }
 }
 

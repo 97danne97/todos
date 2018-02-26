@@ -31,18 +31,13 @@
             <div class="nav-left">
                 <h1><i>Todo.com</i></h1>
             </div>
-            <transition name="fade">
-                <ul class="nav-right" v-if="isShow">
-                    <li><a href="../portfolio/">Home</a></li>
-                    <li><a href="#">About</a></li>
-                    <li><a href="#">Source</a></li>
-                    <li><a href="#">Contact</a></li>
-                </ul>
-            </transition>
+            <transition-group name="fade" tag="ul" class="nav-right">
+                    <li v-if="isShow" v-for="navlink in navlinks" :key="navlink"><a href="../portfolio/">{{navlink.title}}</a></li>
+            </transition-group>
         </nav>
         <main class="container">
             <h1>Todo List</h1>
-            <span><i class="material-icons">create</i><input autofocus v-model="newTodo.title" v-on:keypress.enter="addTodo" placeholder="Add items to your list..."></span>
+            <span><i class="material-icons"></i><input autofocus v-model="newTodo.title" v-on:keypress.enter="addTodo" placeholder="Add items to your list..."></span>
             <draggable @change="saveOrder" :list="todos">
                 <transition-group :name="transitionMode" tag="div" class="list__div">
                     <div class="list__item" v-for="(todo, index) in orderBy(todos, 'priority')" :key="todo">
@@ -81,7 +76,26 @@
                         priority: "",
                     },
                     isShow: false,
-                    transitionMode: "list-item"
+                    transitionMode: "list-item",
+                    navlinks:  {
+                        Home:{
+                            title:"Home",
+                            source:"#"
+                        },
+                        About:{
+                            title:"About",
+                            source:"#"
+                        },
+                        Source:{
+                            title:"Source",
+                            source:"#"
+                        },
+                        Contact:{
+                            title:"Contact",
+                            source:"#"
+                        },
+                    }
+                    
                 }
             },
 
