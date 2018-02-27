@@ -24,7 +24,7 @@
 <body>
     <div id="todo">
         <nav class="navbar">
-            <div class="nav-btn clickable" @click="isShow = !isShow">
+            <div class="nav-btn clickable ripple" @click="isShow = !isShow">
                 <div class="nav-icon" v-bind:class="{ active: isShow }">
                 </div>
             </div>
@@ -32,7 +32,7 @@
                 <h1><i>Todo.com</i></h1>
             </div>
             <transition-group name="fade" tag="ul" class="nav-right">
-                    <li v-if="isShow" v-for="navlink in navlinks" :key="navlink"><a href="../portfolio/">{{navlink.title}}</a></li>
+                    <li v-if="isShow" v-for="navlink in navlinks" :key="navlink"><a href="#" class="ripple">{{navlink.title}}</a></li>
             </transition-group>
         </nav>
         <main class="container">
