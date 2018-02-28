@@ -2,8 +2,9 @@
 <html>
 
 <head>
-    <script src="https://vuejs.org/js/vue.min.js"></script>
+    <script src="scripts/vue.js"></script>
     <link rel="stylesheet" href="index.css" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans|Roboto" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <meta charset="utf-8">
@@ -23,19 +24,25 @@
 
 <body>
     <div id="todo">
-        <nav class="navbar">
-            <div class="nav-btn clickable ripple" @click="isShow = !isShow">
+        <div class="nav-top">
+           <div class="nav-btn clickable ripple" @click="isShow = !isShow">
                 <div class="nav-icon" v-bind:class="{ active: isShow }">
                 </div>
             </div>
-            <div class="nav-left">
-                <h1><i>Todo.com</i></h1>
-            </div>
-            <transition-group name="fade" tag="ul" class="nav-right">
-                    <li v-if="isShow" v-for="navlink in navlinks" :key="navlink"><a href="#" class="ripple">{{navlink.title}}</a></li>
-            </transition-group>
-        </nav>
-        <main class="container">
+            <h1><i>Todo.com</i></h1>
+        </div>
+        <transition name="slide">
+            <nav class="navbar" v-if="isShow">
+                <section id="nav-header">
+                    <p><a>ToDo</a></p>
+                    <p><a>Made by samwaise</a></p>
+                </section>
+                <ul class="nav-left">
+                    <li v-for="navlink in navlinks" :key="navlink"><a href="#" class="ripple"><p>{{navlink.title}}</p></a></li>
+                </ul>
+            </nav>
+        </transition>
+        <main class="container" v-bind:class="{ active: isShow }">
             <h1>Todo List</h1>
             <span><i class="material-icons"></i><input autofocus v-model="newTodo.title" v-on:keypress.enter="addTodo" placeholder="Add items to your list..."></span>
             <draggable @change="saveOrder" :list="todos">
@@ -51,10 +58,14 @@
                 </transition-group>
             </draggable>
         </main>
+        
         <transition name="scale">
             <div class="clickable clear" @click="clearTodo" v-if="todos.length > 0">
                 <i class="material-icons">delete</i>
             </div>
+        </transition>
+        <transition name="fade">
+            <div id="foreground" v-if="isShow" @click="isShow = !isShow"></div>
         </transition>
     </div>
 
@@ -77,25 +88,25 @@
                     },
                     isShow: false,
                     transitionMode: "list-item",
-                    navlinks:  {
-                        Home:{
-                            title:"Home",
-                            source:"#"
+                    navlinks: {
+                        Home: {
+                            title: "Home",
+                            source: "#"
                         },
-                        About:{
-                            title:"About",
-                            source:"#"
+                        About: {
+                            title: "About",
+                            source: "#"
                         },
-                        Source:{
-                            title:"Source",
-                            source:"#"
+                        Source: {
+                            title: "Source",
+                            source: "#"
                         },
-                        Contact:{
-                            title:"Contact",
-                            source:"#"
+                        Contact: {
+                            title: "Contact",
+                            source: "#"
                         },
                     }
-                    
+
                 }
             },
 
@@ -131,7 +142,7 @@
                 removeTodo: function(todo) {
                     this.transitionMode = "list-item";
                     todosRef.child(todo['.key']).remove();
-                    
+
                 },
 
                 //Remove all todo items
@@ -153,13 +164,12 @@
                         });
                     });
                 },
-                
+
                 reorder: function() {
-                    
+
                 }
             }
         })
-
     </script>
 </body>
 
