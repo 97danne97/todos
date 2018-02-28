@@ -5,9 +5,9 @@
 :root {
     --large-li-height: 70px;
     --margin-center: 0 auto 0 auto;
-    --color-accent: #52c5f8;
+    --color-accent: rgb(80, 189, 237);
     --color-danger: #e06f6f;
-    --accent-background: #52c5f8;
+    --accent-background: rgb(80, 189, 237);
     --dark-accent-background: rgb(56, 160, 206);
     --shadow: 0 1px 3px #6d6d6d;
     --shadow-vertical: 1px 6px 1px #6d6d6d;
@@ -111,7 +111,7 @@ nav > ul > li {
 nav > ul > li::before {
     content: '>';
     position: absolute;
-    line-height: 60px;
+    line-height: 55px;
     left: 20px;
 }
 
