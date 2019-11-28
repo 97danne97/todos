@@ -2,23 +2,24 @@
 <html>
 
 <head>
-    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="scripts/vue.js"></script>
     <link rel="stylesheet" href="index.css" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans|Roboto" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <meta charset="utf-8">
     <!-- CDNJS :: Sortable (https://cdnjs.com/) -->
-    <script src="//cdn.jsdelivr.net/npm/sortablejs@1.7.0/Sortable.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sortablejs@1.8.4/Sortable.min.js"></script>
     <!-- CDNJS :: Vue.Draggable (https://cdnjs.com/) -->
-    <script src="//cdnjs.cloudflare.com/ajax/libs/Vue.Draggable/2.16.0/vuedraggable.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/Vue.Draggable/2.20.0/vuedraggable.umd.min.js"></script>
     <!-- Firebase -->
-    <script src="https://gstatic.com/firebasejs/4.0.0/firebase.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.5.0/firebase.js"></script>
     <!-- VueFire -->
-    <script src="https://unpkg.com/vuefire/dist/vuefire.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vuefire/1.4.5/vuefire.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <script src="https://cdn.jsdelivr.net/npm/vue2-filters/dist/vue2-filters.min.js"></script>
+    <script src="scripts/lodash.js"></script>
     <title>ToDo | The modern list</title>
 </head>
 
@@ -44,10 +45,10 @@
         </transition>
         <main class="container" v-bind:class="{ active: isShow }">
             <h1>Vad ska göras?</h1>
-            <span><i class="material-icons"></i><input autofocus v-model="newTodo.title" v-on:keypress.enter="addTodo" placeholder="Lägg till uppgifter som ska slutföras..."></span>
+            <span><i class="material-icons"></i><input autofocus v-model="newTodo.title" v-on:keyup.enter="addTodo" placeholder="Lägg till uppgifter som ska slutföras..."></span>
             <draggable @change="saveOrder" :list="todos">
                 <transition-group :name="transitionMode" tag="div" class="list__div">
-                    <div class="list__item" v-for="(todo, index) in orderBy(todos, 'priority')" :key="todo">
+                    <div class="list__item" v-for="(todo, index) in orderBy" :key="todo.priority">
                         <div class="moveItem">
                             <i class="material-icons">drag_handle</i>
                         </div>
@@ -75,15 +76,22 @@
         var db = firebase.initializeApp({
             databaseURL: 'https://vuetest-1ae8c.firebaseio.com'
         }).database()
+        
         var todosRef = db.ref('todos')
+        
 
         var app = new Vue({
             el: '#todo',
+            firebase() {
+                return {
+                    todos: todosRef 
+                }
+            },
             data() {
                 return {
+                    todos: [],
                     newTodo: {
                         title: "",
-                        checked: "",
                         priority: "",
                     },
                     isShow: false,
@@ -110,11 +118,7 @@
                 }
             },
 
-            firebase: function() {
-                return {
-                    todos: todosRef
-                }
-            },
+            
             methods: {
                 addTodo: function() {
                     //trim() is used to remove whitespace from both ends of a string
@@ -124,7 +128,6 @@
                         //Push an object containing the todo to the todos array
                         todosRef.push({
                             title: todo,
-                            checked: false,
                             priority: "",
                         });
                         //Reset newTodo to an empty string so the input field is cleared
@@ -167,6 +170,12 @@
 
                 reorder: function() {
 
+                }
+                
+            },
+            computed:{
+                orderBy: function(){
+                    return _.orderBy(this.todos, 'priority')
                 }
             }
         })
